@@ -29,6 +29,7 @@ func (m *Model) load(table string) {
 	// fallback: list repos/jobs as tables
 }
 
+func (m Model) Tables() []string { return m.tables }
 func (m Model) Init() tea.Cmd { return nil }
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
