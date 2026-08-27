@@ -1,0 +1,31 @@
+version: 2
+project_name: txs
+before:
+  hooks:
+    - go mod tidy
+    - go vet ./...
+    - go test ./... -count=1 -timeout 30s
+builds:
+  - id: txs
+    main: .
+    binary: txs
+    env: [CGO_ENABLED=0]
+    goos: [linux, android, darwin]
+    goarch: [amd64, arm64]
+    ignore: [{goos: android, goarch: amd64}]
+    ldflags: [-s -w -X main.version={{.Version}}]
+    flags: [-trimpath]
+archives:
+  - id: binaries
+    builds: [txs]
+    name_template: "txs-{{ .Os }}-{{ .Arch }}"
+    format: binary
+checksum:
+  name_template: "checksums.txt"
+release:
+  footer: |
+    ### Install
+    ```bash
+    gh extension install Pastalikek65/txs
+    go install github.com/Pastalikek65/txs@{{.Tag}}
+    ```
