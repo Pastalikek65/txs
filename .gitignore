@@ -1,0 +1,7 @@
+txs
+*.db
+*.db-wal
+*.db-shm
+dist/
+coverage.out
+*.out

@@ -150,3 +150,26 @@ func (s *Store) ListJobs(status string) ([]Job, error) {
 func (s *Store) Close() error {
 	return s.db.Close()
 }
+
+func (s *Store) SetJobStatus(id int64, status string) error {
+	_, err := s.db.Exec(`UPDATE jobs SET status=? WHERE id=?`, status, id)
+	return err
+}
+
+func (s *Store) IncrementRetries(id int64) error {
+	_, err := s.db.Exec(`UPDATE jobs SET retries=retries+1 WHERE id=?`, id)
+	return err
+}
+
+func (s *Store) ListTables() ([]string, error) {
+	rows, err := s.db.Query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
+	if err != nil { return nil, err }
+	defer rows.Close()
+	var out []string
+	for rows.Next() {
+		var n string
+		if err := rows.Scan(&n); err != nil { return nil, err }
+		out = append(out, n)
+	}
+	return out, rows.Err()
+}
